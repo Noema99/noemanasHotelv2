@@ -19,15 +19,17 @@ const SignupScreen = ({navigation}) => {
         setValid(false)
         return
       } else if (!password && password.trim() && password.length > 6) {
-        setError("Weak password, minimum 5 chars")
+        Alert.alert('Oups', 'Mot de passe faible, minimum 5 chars')
+        //setError("Mot de passe faible, minimum 5 chars")
         setValid(false)
         return
       } else if (!confirmPassword && confirmPassword.trim()) {
-        setError("You need to confirm your password")
+        Alert.alert('Oups', 'Vous devez confirmer votre mot de passe')
+        //setError("You need to confirm your password")
         setValid(false)
         return
       }else if (confirmPassword !== password) {
-        Alert.alert("Passwords don't match");
+        Alert.alert("Oups", "Passwords don't match")
         setValid(false)
         return
       }
@@ -81,7 +83,7 @@ const SignupScreen = ({navigation}) => {
       />
 
       <FormButton
-        buttonTitle="Sign Up!"
+        buttonTitle="Sign Up"
         onPress={() => __doSignUp()}
       />
 

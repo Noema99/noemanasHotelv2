@@ -1,5 +1,5 @@
-import React , {useContext, useState} from 'react';
-import { View,Text, TouchableOpacity, Image, Platform, StyleSheet,} from 'react-native';
+import React , {  useEffect , useState} from 'react';
+import { View,Text, TouchableOpacity, Image, Platform, StyleSheet,Alert, Button } from 'react-native';
 
 import FormInput from '../components/FormInput';
 import FormButton from '../components/FormButton';
@@ -9,28 +9,56 @@ import Icon  from 'react-native-vector-icons/FontAwesome';
 import auth, { firebase } from "@react-native-firebase/auth";
 
 
-const LoginScreen = ({navigation}) => {
+const LoginScreen = ({ navigation }) => {
+  // on définie les attributs avec lesquel on va travailler
     const [email, setEmail] = useState();
-  const [password, setPassword] = useState();
- 
-  const __doSingIn = async (email, password) => {
-    try {
-      let response = await auth().signInWithEmailAndPassword(email, password)
-      if (response && response.user) {
-        console.log("Authenticated successfully")
-        navigation.navigate("Home")
+    const [password, setPassword] = useState();
+    const [initializing, setInitializing] = useState(true);
+    const [user, setUser] = useState();
+   /* state = {
+      isLogin: false,
+      authenticated: false
+    };*/
 
+    const  onAuthStateChanged = ((user)=> {
+        setUser(user);
+        if (initializing) setInitializing(false);
+    });
+    useEffect(() => {
+      const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
+      return subscriber; // unsubscribe on unmount
+    }, []);
+
+    if (initializing) return null;
+  
+    const __doSingIn = async (email, password) => {
+      try {
+        let response = await auth().signInWithEmailAndPassword(email, password)
+        if (response && response.user) {
+          console.log(user.email)
+          Alert.alert("Bienvenu ",user.email,[  
+            {  text: 'Annuler',  
+              onPress: () => {
+                auth().signOut().then(() => console.log('User signed out!'));
+              }
+              ,  
+                style: 'cancel'},  
+            {   text: 'Commençer', onPress: () => navigation.navigate("Home")},  
+           ]  )
+          //navigation.navigate("Home")
+
+        }
+      } catch (e) {
+        console.error(e.message)
+        Alert.alert("Oups", "Vous n'êtes toujours pas inscris chez nous!!")
       }
-    } catch (e) {
-      console.error(e.message)
     }
-  }
   
-  
-  /*componentDidMount() {
-    //  this.register("said1292@gmail.com", "123456");
+  /*
+  componentDidMount=() =>{
+    //  this.register("noema@gmail.com", "123456789");
     this.__isTheUserAuthenticated();
-  }
+  };
 
   __isTheUserAuthenticated = () => {
     let user = firebase.auth().currentUser.uid;
@@ -40,7 +68,7 @@ const LoginScreen = ({navigation}) => {
     } else {
       this.setState({ authenticated: false });
     }
-  };*/ 
+  }; */
     return (
         <View style={styles.container}>
             <Image
