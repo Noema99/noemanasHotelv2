@@ -17,7 +17,9 @@ const LoginScreen = ({navigation}) => {
     try {
       let response = await auth().signInWithEmailAndPassword(email, password)
       if (response && response.user) {
-        console.log( "Authenticated successfully")
+        console.log("Authenticated successfully")
+        navigation.navigate("Home")
+
       }
     } catch (e) {
       console.error(e.message)

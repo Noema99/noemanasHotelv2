@@ -60,20 +60,39 @@ const OnboardingScreen = ({navigation}) => {
             backgroundColor: '#2E765E',
             image: <Image source={require('../assets/logohotel.png')} />,
             title: 'Votre séjour de rêves',
-            subtitle: 'Venez nous découvrir',
+            subtitle: 'On vous souhaite la bienvenue! \n Venez nous découvrir..',
           },
           {
-            backgroundColor: '#fdeb93',
-            image: <Image source={require('../assets/onboarding-img2.png')} />,
-            title: 'Share Your Favorites',
+            backgroundColor: '#5d3c29',
+            image: <Image style={{ height: 900, width: 600}} source={require('../assets/camp1.jpg')} />,
+            title: '',
             subtitle: 'Share Your Thoughts With Similar Kind of People',
           },
           {
-            backgroundColor: '#e9bcbe',
-            image: <Image source={require('../assets/onboarding-img3.png')} />,
+            backgroundColor: '#706257',
+            image: <Image style={{ height: 900, width: 600}}source={require('../assets/camp2.jpg')} />,
             title: 'Become The Star',
             subtitle: "Let The Spot Light Capture You",
-          },
+            },
+            {
+            
+            backgroundColor: '#906b59',
+            image: <Image style={{ height: 900, width: 600}} source={require('../assets/camp3.jpg')} />,
+            title: 'Become The Star',
+            subtitle: "Let The Spot Light Capture You",
+            },
+            {
+            backgroundColor: '#614e3d',
+            image: <Image style={{ height: 900, width: 600}} source={require('../assets/camp4.jpg')} />,
+            title: 'Become The Star',
+            subtitle: "Let The Spot Light Capture You",
+            },
+            {
+            backgroundColor: '#2E765E',
+            image: <Image source={require('../assets/logohotel.png')} />,
+            title: 'Soyez les BIENVENUS',
+            subtitle: 'Réservez maintenant votre chambre',
+          }
         ]}
       />
     );
@@ -83,9 +102,15 @@ export default OnboardingScreen;
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1, 
-    alignItems: 'center', 
-    justifyContent: 'center'
-  },
+        flex: 1, 
+        alignItems: 'center', 
+        justifyContent: 'center'
+    },
+
+    photo: {
+        resizeMode: "center",
+        height: 100,
+        width: 100
+    }
 
 });
