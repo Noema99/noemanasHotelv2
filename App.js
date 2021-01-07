@@ -1,9 +1,8 @@
 import React from 'react';
+import Providers from './navigation';
 
-import AppNavigator from './navigation/AppNavigator';
+const App = () => {
+  return <Providers />;
+}
 
-export default function App(){ 
-  return (
-    <AppNavigator/>
-  );
-};
+export default App;

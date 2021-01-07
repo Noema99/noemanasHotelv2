@@ -8,7 +8,7 @@ const ProfileScreen = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.text}>Welcome {user.uid}</Text>
+      <Text style={styles.text}>Welcome {user.uid} !! {user.email}</Text>
       <FormButton buttonTitle="Logout" onPress={() => logout()} />
     </View>
   );

@@ -1,17 +1,57 @@
 import React, {useContext, useState} from 'react';
-import {View, Text, TouchableOpacity, Platform, StyleSheet} from 'react-native';
+import {View, Text, TouchableOpacity, Platform, StyleSheet, Button} from 'react-native';
 import FormInput from '../components/FormInput';
 import FormButton from '../components/FormButton';
 import SocialButton from '../components/SocialButton';
-import {AuthContext} from '../navigation/AuthProvider';
+import auth from "@react-native-firebase/auth";
+import { Alert } from 'react-native';
 
 const SignupScreen = ({navigation}) => {
-  const [email, setEmail] = useState();
-  const [password, setPassword] = useState();
-  const [confirmPassword, setConfirmPassword] = useState();
+    const [email, setEmail] = useState();
+    const [password, setPassword] = useState();
+    const [confirmPassword, setConfirmPassword] = useState();
+    const [error, setError] = useState("");
+    const [isValid, setValid] = useState(true);
+    
+  const __doSignUp = () => {
+      if (!email) {
+        setError("Email required *")
+        setValid(false)
+        return
+      } else if (!password && password.trim() && password.length > 6) {
+        Alert.alert('Oups', 'Mot de passe faible, minimum 5 chars')
+        //setError("Mot de passe faible, minimum 5 chars")
+        setValid(false)
+        return
+      } else if (!confirmPassword && confirmPassword.trim()) {
+        Alert.alert('Oups', 'Vous devez confirmer votre mot de passe')
+        //setError("You need to confirm your password")
+        setValid(false)
+        return
+      }else if (confirmPassword !== password) {
+        Alert.alert("Oups", "Passwords don't match")
+        setValid(false)
+        return
+      }
+  
+      __doCreateUser(email, password)
+    }
+  
+    const __doCreateUser = async (email, password) => {
+      try {
+        let response = await auth().createUserWithEmailAndPassword(
+          email,
+          password
+        )
+        if (response && response.user) {
+          Alert.alert("Success ✅", "Account created successfully")
+        }
+      } catch (e) {
+        console.error(e.message)
+      }
+    }
 
-  const register = useContext(AuthContext);
-
+    
   return (
     <View style={styles.container}>
       <Text style={styles.text}>Create an account</Text>
@@ -37,21 +77,21 @@ const SignupScreen = ({navigation}) => {
       <FormInput
         labelValue={confirmPassword}
         onChangeText={(userConfirmPassword) => setConfirmPassword(userConfirmPassword)}
-       placeholderText="Confirm Password"
+        placeholderText="Confirm Password"
         iconType="lock"
         secureTextEntry={true}
       />
 
       <FormButton
         buttonTitle="Sign Up"
-        onPress={() => register(email,password)}
+        onPress={() => __doSignUp()}
       />
 
       <View style={styles.textPrivate}>
         <Text style={styles.color_textPrivate}>
           By registering, you confirm that you accept our{' '}
         </Text>
-        <TouchableOpacity onPress={() => alert('Terms Clicked!')}>
+        <TouchableOpacity onPress={() => <Button title="Be sure that this application is : Required by the law, Required by third party services and Increases Transparency"/>}>
           <Text style={[styles.color_textPrivate, {color: '#e88832'}]}>
             Terms of service
           </Text>
@@ -61,8 +101,7 @@ const SignupScreen = ({navigation}) => {
           Privacy Policy
         </Text>
       </View>
-
-        <View>
+      <View>
           <SocialButton
             buttonTitle="Sign Up with Facebook"
             btnType="facebook"
@@ -79,9 +118,7 @@ const SignupScreen = ({navigation}) => {
             onPress={() => {}}
           />
         </View>
-     
-
-      <TouchableOpacity
+        <TouchableOpacity
         style={styles.navButton}
         onPress={() => navigation.navigate('Login')}>
         <Text style={styles.navButtonText}>Have an account? Sign In</Text>
