@@ -1,18 +1,34 @@
-import React, { useContext,  createContext, useReducer } from 'react';
-import {View, Text, Alert, StyleSheet, FlatList} from 'react-native';
-import FormButton from '../components/FormButton';
+import React, {useEffect, useState} from 'react';
+import {View, Text, StyleSheet, FlatList, SafeAreaView, Alert} from 'react-native';
+
+import Ionicons from 'react-native-vector-icons/Ionicons';
+
+import PostCard from '../components/PostCard';
 
 
-const HomeScreen = ({ navigation }) => {
+import {
+    Container,Card, UserInfo, UserImg, UserInfoText, UserName, PostTime, PostText
+  } from '../styles/FeedStyles';
   
+ 
+  
+  const HomeScreen = () => {
     return (
-    <View>
-        <Text>
-            welcome Homeeeeeeeeeee 
-        </Text>
-    </View>
-
-    );
-  };
-  
-  export default HomeScreen;
+       
+        <Container>
+            <Card>
+                <UserInfo>
+                    <UserImg source={require('../assets/users/user-3.jpg')} />
+                    <UserInfoText>
+                        <UserName>Noema benadada!!</UserName>
+                        <PostTime>4hours ago </PostTime>
+                    </UserInfoText>
+                </UserInfo>
+                <PostText>Hello from the other side </PostText>
+            </Card>
+        
+        </Container>
+      );
+    };
+    
+    export default HomeScreen;  

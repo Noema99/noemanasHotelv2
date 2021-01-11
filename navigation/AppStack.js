@@ -10,7 +10,7 @@ import HomeScreen from '../screens/HomeScreen';
 
 import ChatScreen from '../screens/ChatScreen';
 import ProfileScreen from '../screens/ProfileScreen';
-import AddPostScreen from '../screens/AddPostScreen';
+import AddReservationScreen from '../screens/AddReservationScreen';
 
 
 const Stack = createStackNavigator();
@@ -39,15 +39,15 @@ const FeedStack = ({navigation}) => (
               size={22}
               backgroundColor="#fff"
               color="#2e64e5"
-              onPress={() => navigation.navigate('AddPost')}
+              onPress={() => navigation.navigate('AddReservation')}
             />
           </View>
         ),
       }}
     />
      <Stack.Screen
-      name="AddPost"
-      component={AddPostScreen}
+      name="AddReservation"
+      component={AddReservationScreen}
       options={{
         title: '',
         headerTitleAlign: 'center',
@@ -89,7 +89,7 @@ const AppStack = () => {
         }}
       />
    <Tab.Screen
-        name="Messages"
+        name="Réclamations"
         component={ChatScreen}
         options={{
           // tabBarLabel: 'Home',

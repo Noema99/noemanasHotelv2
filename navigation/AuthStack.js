@@ -3,6 +3,7 @@ import {View} from 'react-native';
 import OnboardingScreen from '../screens/OnboardingScreen';
 import LoginScreen from '../screens/LoginScreen';
 import SignupScreen from '../screens/SignupScreen';
+import ForgotpasswordScreen from '../screens/ForgotpasswordScreen';
 import { createStackNavigator } from '@react-navigation/stack';
 
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
@@ -45,6 +46,11 @@ const AuthStack = () => {
       <Stack.Screen
         name="Login"
         component={LoginScreen}
+        options={{header: () => null}}
+      />
+      <Stack.Screen
+        name="Forgotpassword"
+        component={ForgotpasswordScreen}
         options={{header: () => null}}
       />
       <Stack.Screen

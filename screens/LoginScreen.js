@@ -18,43 +18,15 @@ const LoginScreen = ({ navigation }) => {
   
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
-
-  let { user, login } =useContext(AuthContext);
+  let { user, login } = useContext(AuthContext);
   
-
-  /*const __doSingIn = async (email, password) => {
-    try {
-      let response = await auth().signInWithEmailAndPassword(email, password)
-      if (response && response.user) {
-        console.log(user.email)
-        Alert.alert("Bienvenu ",user.email,[  
-          {  text: 'Annuler',  
-            onPress: () => {
-              auth().signOut().then(() => {
-                Alert.alert("Bye bye" ,"A la prochaine")
-                console.log('User signed out!')
-              });
-            }
-            ,  
-              style: 'cancel'},  
-          {   text: 'Commençer', onPress: () => navigation.navigate("Home")},  
-         ]  )
-        //navigation.navigate("Home")
-
-      }
-    } catch (e) {
-      console.error(e.message)
-      Alert.alert("Oups", "Vous n'êtes toujours pas inscris chez nous!!")
-    }
-  }*/
-
   return (
     <View style={styles.container}>
       <Image
         source={require('../assets/logo.jpg')}
         style={styles.logo}
       />
-      <Text style={styles.text}>Welcomes you </Text>
+      <Text style={styles.navButtonText}>Welcomes you </Text>
 
       <FormInput
         labelValue={email}
@@ -81,7 +53,8 @@ const LoginScreen = ({ navigation }) => {
         }}
       />
 
-      <TouchableOpacity style={styles.forgotButton} onPress={() => {}}>
+      <TouchableOpacity style={styles.forgotButton}
+        onPress={() => navigation.navigate('Forgotpassword')}>
         <Text style={styles.navButtonText}>Forgot Password?</Text>
       </TouchableOpacity>
 
@@ -120,6 +93,7 @@ export default LoginScreen;
 
 const styles = StyleSheet.create({
   container: {
+    backgroundColor:'white',
     justifyContent: 'center',
     alignItems: 'center',
     padding: 20,
