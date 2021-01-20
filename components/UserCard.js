@@ -17,7 +17,7 @@ import {
   Divider,
 } from '../styles/FeedStyles';
 
-const PostCard = ({item}) => {
+const UserCard = ({item}) => {
   //likeIcon = item.liked ? 'heart' : 'heart-outline';
   //likeIconColor = item.liked ? '#2e64e5' : '#333';
 
@@ -40,19 +40,20 @@ const PostCard = ({item}) => {
   return (
     <Card>
       <UserInfo>
-      <UserImg source={{uri: item.userImg}} />
         <UserInfoText>
-          <UserName>{item.userName}</UserName>
-          <UserName>{item.userId}</UserName>
-          <PostTime>{item.postTime.toString}</PostTime>
+                   <UserName>{item.id}</UserName>
+                  <UserName>{item.userId}</UserName>
+                  <UserName>{item.firstName}</UserName>
+                  <UserName>{item.lastName}</UserName>
+                  <UserName>{item.sexe}</UserName>
+                  <UserName>{item.dateNaissance}</UserName>
+                  <UserName>{item.city}</UserName>
         </UserInfoText>
       </UserInfo>
-      <PostText>{item.post}</PostText>
-      {item.postImg != null ? <PostImg source={{uri: item.postImg}} /> : <Divider />}
+      <PostText>{item.userId}</PostText>
 
-     
     </Card>
   );
 };
 
-export default PostCard;
+export default UserCard;

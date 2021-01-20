@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
 export const Container = styled.View`
-  flex: 1;
+ flex: 1;
   align-items: center;
   background-color: #fff;
   padding: 20px;
@@ -45,7 +45,7 @@ export const PostTime = styled.Text`
 `;
 
 export const PostText = styled.Text`
-    font-size: 14px;
+    font-size: 18px;
     font-family: 'Lato-Regular';
     padding-left: 15px;
     padding-right: 15px;

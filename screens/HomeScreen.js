@@ -1,33 +1,37 @@
-import React, {useEffect, useState} from 'react';
+
+import React, { useEffect, useState, useContext } from 'react';
 import {View, Text, StyleSheet, FlatList, SafeAreaView, Alert} from 'react-native';
 
-import Ionicons from 'react-native-vector-icons/Ionicons';
 
-import PostCard from '../components/PostCard';
+import UserCard from '../components/UserCard';
 
+import {AuthContext}   from '../navigation/AuthProvider';
+import firestore from '@react-native-firebase/firestore';
 
 import {
     Container,Card, UserInfo, UserImg, UserInfoText, UserName, PostTime, PostText
   } from '../styles/FeedStyles';
   
- 
+const HomeScreen = ({userId} ) => {
+  //const [posts, setPosts] = useState(null);
+  //const [users, setUsers] = useState(null);
+
+  const { logout, user, getUserInfoByUid } = useContext(AuthContext);
+  const [usrInfo, setusrInfo] = useState(null);
+
+  const getAllInfo = async (uid) => {
+    const usrInfos = await getUserInfoByUid(uid);
+    setusrInfo(usrInfos);
+    console.log('the object gotten is ' + console.log(JSON.stringify(usrInfo)));
+  };
+  useEffect(() => {
+    getAllInfo(user.uid);
+  }, []);
   
-  const HomeScreen = () => {
     return (
-       
-        <Container>
-            <Card>
-                <UserInfo>
-                    <UserImg source={require('../assets/users/user-3.jpg')} />
-                    <UserInfoText>
-                        <UserName>Noema benadada!!</UserName>
-                        <PostTime>4hours ago </PostTime>
-                    </UserInfoText>
-                </UserInfo>
-                <PostText>Hello from the other side </PostText>
-            </Card>
-        
-        </Container>
+      <View>
+        {usrInfo && <Text >Bienvenue : {usrInfo['lastName']} </Text>}
+       </View>
       );
     };
     

@@ -1,6 +1,7 @@
 import React, {createContext, useState} from 'react';
 import auth from '@react-native-firebase/auth';
 
+import firestore from '@react-native-firebase/firestore';
 export const AuthContext = createContext();
 
 export const AuthProvider = ({children}) => {
@@ -31,6 +32,25 @@ export const AuthProvider = ({children}) => {
           } catch (e) {
             console.log(e);
           }
+        },
+        getUserInfoByUid: async (uid) => {
+          let usersRef = firestore().collection('users').doc(uid);
+
+          const doc = await usersRef.get();
+          if (!doc.exists) {
+            console.log('No such document! (user)');
+            return null;
+          }
+          return doc.data();
+        },
+        getUserReclamationByUid: async (uid) => {
+          let reclamationRef = firestore().collection('reclamations').doc(uid);
+          const docu = await reclamationRef.get();
+          if (!docu.exists) {
+            console.log('No such document! (reclamations)');
+            return null;
+          }
+          return docu.data();
         }
       }}>
       {children}

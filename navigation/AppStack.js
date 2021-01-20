@@ -7,11 +7,11 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 
 import HomeScreen from '../screens/HomeScreen';
-
-import ChatScreen from '../screens/ChatScreen';
+import ReclamationScreen from '../screens/ReclamationScreen';
 import ProfileScreen from '../screens/ProfileScreen';
+import EditProfileScreen from '../screens/EditProfileScreen';
 import AddReservationScreen from '../screens/AddReservationScreen';
-
+import ReservationScreen from '../screens/ReservationScreen';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -24,7 +24,7 @@ const FeedStack = ({navigation}) => (
       options={{
         headerTitleAlign: 'center',
         headerTitleStyle: {
-          color: '#2e64e5',
+          color: '#2E765E',
           fontFamily: 'Kufam-SemiBoldItalic',
           fontSize:18
         },
@@ -38,7 +38,7 @@ const FeedStack = ({navigation}) => (
               name="plus"
               size={22}
               backgroundColor="#fff"
-              color="#2e64e5"
+              color="#2E765E"
               onPress={() => navigation.navigate('AddReservation')}
             />
           </View>
@@ -64,7 +64,83 @@ const FeedStack = ({navigation}) => (
         ),
       }}
     />
-   
+    <Stack.Screen
+      name="Reclamation"
+      component={ReclamationScreen}
+      options={{
+        
+        headerTitleAlign: 'center',
+        headerTitleStyle: {
+          color: '#2E765E',
+          fontFamily: 'Kufam-SemiBoldItalic',
+          fontSize:18
+        },
+        headerStyle: {
+          shadowColor: '#fff',
+          elevation: 0,
+        },headerRight: () => (
+          <View style={{marginRight: 10}}>
+            <FontAwesome5.Button
+              name="plus"
+              size={22}
+              backgroundColor="#fff"
+              color="#2E765E"
+              onPress={() => navigation.navigate('AddReservation')}
+            />
+          </View>
+        ),
+        //headerBackTitleVisible: false,
+        headerBackImage: () => (
+          <View style={{marginLeft:15}}>
+            <Ionicons name="arrow-back" size={25} color="#2e64e5" />
+          </View>
+        ),
+      }}
+    />
+      <Stack.Screen
+      name="Mon profil"
+      component={ProfileScreen}
+      options={{
+        headerTitleAlign: 'center',
+        headerTitleStyle: {
+          color: '#2E765E',
+          fontFamily: 'Kufam-SemiBoldItalic',
+          fontSize:18
+        },
+        headerStyle: {
+          shadowColor: '#fff',
+          elevation: 0,
+        },
+        headerRight: () => (
+          <View style={{marginRight: 10}}>
+            <FontAwesome5.Button
+              name="plus"
+              size={22}
+              backgroundColor="#fff"
+              color="#2E765E"
+              onPress={() => navigation.navigate('EditProfileScreen')}
+            />
+          </View>
+        ),
+      }}
+    />
+    <Stack.Screen
+      name="EditProfile"
+      component={EditProfileScreen}
+      options={{
+        title: 'Modifier ses coordonnées',
+        headerTitleAlign: 'center',
+        headerStyle: {
+          elevation: 0,
+        },
+        headerBackTitleVisible: false,
+        headerBackImage: () => (
+          <View style={{marginLeft:15}}>
+            <Ionicons name="arrow-back" size={25} color="#2E765E" onPress={() => navigation.navigate('ProfileScreen')}/>
+          </View>
+        ),
+      }}
+    />
   </Stack.Navigator>
 );
 
@@ -72,7 +148,7 @@ const AppStack = () => {
   return (
     <Tab.Navigator
       tabBarOptions={{
-        activeTintColor: '#2e64e5',
+        activeTintColor: '#2E765E',
       }}>
       <Tab.Screen
         name="Home"
@@ -90,12 +166,26 @@ const AppStack = () => {
       />
    <Tab.Screen
         name="Réclamations"
-        component={ChatScreen}
+        component={ReclamationScreen}
         options={{
-          // tabBarLabel: 'Home',
+          //tabBarLabel: 'Reclamation',
           tabBarIcon: ({color, size}) => (
             <Ionicons
               name="chatbox-ellipses-outline"
+              color={color}
+              size={size}
+            />
+          ),
+        }}
+      />
+       <Tab.Screen
+        name="Réservations"
+        component={ReservationScreen}
+        options={{
+          //tabBarLabel: 'Reclamation',
+          tabBarIcon: ({color, size}) => (
+            <Ionicons
+              name="ios-basket-outline"
               color={color}
               size={size}
             />
