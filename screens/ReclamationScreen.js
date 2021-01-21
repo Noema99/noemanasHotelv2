@@ -20,11 +20,12 @@ const ReclamationScreen =() => {
   const { colors } = useTheme();
   const [typeRec, setTypeRec] = useState(null);
   const [reclamation, setReclamation] = useState(null);
-
+  const [usrReclamation, setusrReclamation] = useState(null);
   const { logout, user, getUserInfoByUid, getUserReclamationByUid } = useContext(AuthContext);
   const [usrInfo, setusrInfo] = useState(null);
+  const [totalRecla, setTotalRecla] = useState(null);
 
-    // informations sur les coordonnées du user
+  // informations sur les coordonnées du user
     const getAllInfo = async (uid) => {
       const usrInfos = await getUserInfoByUid(uid);
       setusrInfo(usrInfos);
@@ -32,6 +33,23 @@ const ReclamationScreen =() => {
     useEffect(() => {
       getAllInfo(user.uid);
     }, []);
+  
+  // informations sur les reclamations de l'user et le nombre 
+  const getAllReclamation = async (uid) => {
+    const usrReclamations = await getUserReclamationByUid(uid);
+    setusrReclamation(usrReclamations);
+    await firestore()
+      .collection('reclamations')
+      .where("userId", "==", uid)
+      .get()
+      .then(function (querySnapShot) {
+        setTotalRecla(querySnapShot.size);
+      })
+      console.log("nbr total des reserv de cet utilisateur est "+ totalRecla);
+  }
+  useEffect(() => {
+    getAllReclamation(user.uid);
+  }, []);
   
   // renvoyer les données à propos dela reclamation 
   const submitReclamation = async () => {
@@ -53,89 +71,87 @@ const ReclamationScreen =() => {
     })
     .catch((error) => {
       console.log('Something went wrong with added reclamation to firestore.', error);
-    }
-    
-    )
-      
-    .update();
-
+    })     
+    .update().doc();
   }
+  
+
   return (
     <Container> 
       {usrInfo && 
-     <View>
-     <View style={styles.userInfoSection}>
-          <View style={{ flexDirection: 'row', marginTop: 15 }}>
-            <Avatar.Image
-              source={require('../assets/users/user-0.jpg')}
-              size={80}
-            />
-            <View style={{ marginLeft: 20 }}>
-              <Title style={[styles.title, {
-                marginTop: 15,
-                marginBottom: 5,
-              }]}>{usrInfo['firstName']} {usrInfo['lastName']} </Title>         
-              <Caption style={styles.caption}> {usrInfo['sexe']}</Caption>
+        <View>
+          <View style={styles.userInfoSection}>
+            <View style={{ flexDirection: 'row', marginTop: 15 }}>
+              <Avatar.Image
+                source={require('../assets/users/user-0.jpg')}
+                size={80}
+              />
+              <View style={{ marginLeft: 20 }}>
+                <Title style={[styles.title, {
+                  marginTop: 15,
+                  marginBottom: 5,
+                }]}>{usrInfo['firstName']} {usrInfo['lastName']} </Title>         
+                <Caption style={styles.caption}> {usrInfo['sexe']}</Caption>
+              </View>
             </View>
           </View>
-        </View>
-    <View style={styles.reclamation}>
-      <Text style={styles.text}>Partagez vos réclamations</Text>
-      <View style={styles.action1}>
-              <FontAwesome name="bell-o" color={colors.text} size={20} />
-              <SelectInput   
-                placeholder="Type de votre réclamation"
-                placeholderTextColor="#666666"
+          <View style={styles.infoBoxWrapper}>
+           
+            <View style={styles.infoBox}>
+              {usrInfo && <Title>{totalRecla}</Title>}
+              <Caption>Réclamations</Caption>
+            </View>
+          </View>
+          <View style={styles.reclamation}>
+            <Text style={styles.text}>Partagez vos réclamations</Text>
+            <View style={styles.action1}>
+                    <FontAwesome name="bell-o" color={colors.text} size={20} />
+                    <SelectInput   
+                      placeholder="Type de votre réclamation"
+                      placeholderTextColor="#666666"
+                      autoCorrect={false}
+                      value={typeRec}
+                      onChange={(value) => setTypeRec(value)}  
+                      valueStyle={[
+                      styles.textInput,
+                      {color: colors.text,border:0,},                        
+                      ]}
+                      options={[{
+                          value: 'value1',
+                          label: 'Annulation',
+                      },{
+                          value: 'value2',
+                          label: 'Modification',
+                      },{
+                          value: 'value3',
+                          label: 'Commentaire',
+                      },{
+                          value: 'value3',
+                          label: 'Autre',
+                      }]}       
+                    />
+            </View>     
+            <View style={styles.action}>
+            <FontAwesome name="bullhorn" color={colors.text} size={20} />
+              <TextInput
+                placeholder="Votre réclamation ici"
+                        placeholderTextColor="#666666"
+                      // numberOfLines={5}
                 autoCorrect={false}
-                value={typeRec}
-                onChange={(value) => setTypeRec(value)}  
-                valueStyle={[
-                styles.textInput,
-                {color: colors.text,border:0,},                        
+                value={reclamation}
+                onChangeText={(content) => setReclamation(content)}               
+                style={[
+                  styles.textInput,
+                  {color: colors.text,},
                 ]}
-                options={[{
-                    value: 'value1',
-                    label: 'Annulation',
-                },
-                {
-                    value: 'value2',
-                    label: 'Modification',
-                },
-                {
-                    value: 'value3',
-                    label: 'Commentaire',
-                },
-                    {
-                    value: 'value3',
-                    label: 'Autre',
-                }]}       
               />
-      </View>
-     
-      <View style={styles.action}>
-      <FontAwesome name="bullhorn" color={colors.text} size={20} />
-        <TextInput
-          placeholder="Votre réclamation ici"
-                  placeholderTextColor="#666666"
-                 // numberOfLines={5}
-          autoCorrect={false}
-          value={reclamation}
-          onChangeText={(content) => setReclamation(content)}
-          
-          style={[
-            styles.textInput,
-            {
-              color: colors.text,
-            },
-          ]}
-        />
-      </View>
-     
-      <TouchableOpacity style={styles.commandButton} onPress={() => submitReclamation()}>
-        <Text style={styles.panelButtonTitle}>Envoyer</Text>
-              </TouchableOpacity>
-              </View>
-    </View>  }
+            </View>
+            <TouchableOpacity style={styles.commandButton} onPress={() => submitReclamation()}>
+              <Text style={styles.panelButtonTitle}>Envoyer</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      }
    </Container>
 );
 };
@@ -268,5 +284,20 @@ const styles = StyleSheet.create({
     lineHeight: 14,
     fontWeight: '500',
     
+  },infoBoxWrapper: {
+    borderBottomColor: '#dddddd',
+    borderBottomWidth: 1,
+    borderTopColor: '#dddddd',
+    borderTopWidth: 1,
+    flexDirection: 'row',
+    height: 100,  
+    marginTop: 35,
+  },
+  infoBox: {
+    width: '60%',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingLeft:120,
+  
   },
 });
