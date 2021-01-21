@@ -1,6 +1,7 @@
 import React, {useContext, useState, useEffect} from 'react';
 import { View,SafeAreaView,  StyleSheet, TouchableOpacity,TextInput,Alert } from 'react-native';
 
+import firestore from '@react-native-firebase/firestore';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import { AuthContext } from '../navigation/AuthProvider';
 import {
@@ -11,46 +12,42 @@ import {
   TouchableRipple,
 } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import EditProfileScreen from './EditProfileScreen';
-
 
 const ProfileScreen = ({ navigation }) => {
   
   const { logout, user, getUserInfoByUid, getUserReclamationByUid } = useContext(AuthContext);
   const [usrInfo, setusrInfo] = useState(null);
+  const [usrNewReclamation, setusrNewReclamation] = useState(null);
   const [usrReclamation, setusrReclamation] = useState(null);
+  const [totalRecla, setTotalRecla] = useState(null);
+
   // informations sur les coordonnées du user
   const getAllInfo = async (uid) => {
     const usrInfos = await getUserInfoByUid(uid);
     setusrInfo(usrInfos);
-    console.log('the object gotten is ' + console.log(JSON.stringify(usrInfo)));
-  };
+  }
   useEffect(() => {
     getAllInfo(user.uid);
   }, []);
 
-  // informations sur les reclamations de l'user
+  // informations sur les reclamations de l'user et le nombre 
   const getAllReclamation = async (uid) => {
     const usrReclamations = await getUserReclamationByUid(uid);
     setusrReclamation(usrReclamations);
-    console.log('the object gotten is ' + console.log(JSON.stringify(usrReclamation)));
-  };
+    await firestore()
+      .collection('reclamations')
+      .where("userId", "==", uid)
+      .get()
+      .then(function (querySnapShot) {
+        setTotalRecla(querySnapShot.size);
+      })
+      console.log("nbr total des reserv de cet utilisateur est "+ totalRecla);
+  }
   useEffect(() => {
     getAllReclamation(user.uid);
   }, []);
 
-  /* 
-   <View style={{marginRight: -350}}>
-            <FontAwesome5.Button
-              name="edit"
-              size={25}
-              backgroundColor="#fff"
-              color="#2E765E"
-              onPress={() => navigation.navigate('EditProfile')}
-            />
-          </View>*/
-  return (
-    
+  return (  
     <SafeAreaView style={styles.container}>
       {usrInfo &&
         <View>
@@ -92,11 +89,11 @@ const ProfileScreen = ({ navigation }) => {
             borderRightColor: '#dddddd',
             borderRightWidth: 1
           }]}>
-            <Title>0</Title>
+            <Title>..</Title>
             <Caption>Réservations</Caption>
           </View>
           <View style={styles.infoBox}>
-            {usrReclamation && <Title>{usrReclamation.size}</Title>}
+            {usrInfo && <Title>{totalRecla}</Title>}
             <Caption>Réclamations</Caption>
           </View>
       </View>

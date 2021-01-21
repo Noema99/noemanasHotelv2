@@ -50,7 +50,7 @@ export const AuthProvider = ({children}) => {
             console.log('No such document! (reclamations)');
             return null;
           }
-          return docu.data();
+          return docu.data();  
         }
       }}>
       {children}

@@ -1,4 +1,4 @@
-import React, {useContext, useState} from 'react';
+import React,{useContext, useState, useEffect} from 'react';
 import { View, Text, StyleSheet, TouchableOpacity,TextInput,Alert } from 'react-native';
 
 import { AuthContext } from '../navigation/AuthProvider';
@@ -6,98 +6,110 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import { useTheme } from 'react-native-paper';
 import SelectInput from '@tele2/react-native-select-input';
 import firestore from '@react-native-firebase/firestore';
-
+import {
+  Avatar,
+  Title,
+  Caption,
+  TouchableRipple,
+} from 'react-native-paper';
 import {
   Container,Card, UserInfo, UserImg, UserInfoText, UserName, PostTime, PostText
 } from '../styles/FeedStyles';
 
 const ReclamationScreen =() => {
-  const { user, logout } = useContext(AuthContext);
   const { colors } = useTheme();
   const [typeRec, setTypeRec] = useState(null);
   const [reclamation, setReclamation] = useState(null);
+
+  const { logout, user, getUserInfoByUid, getUserReclamationByUid } = useContext(AuthContext);
+  const [usrInfo, setusrInfo] = useState(null);
+
+    // informations sur les coordonnées du user
+    const getAllInfo = async (uid) => {
+      const usrInfos = await getUserInfoByUid(uid);
+      setusrInfo(usrInfos);
+    }
+    useEffect(() => {
+      getAllInfo(user.uid);
+    }, []);
   
- 
+  // renvoyer les données à propos dela reclamation 
   const submitReclamation = async () => {
-    
     firestore()
     .collection('reclamations')
-    .doc(user.uid)
+    .doc()
     .set({
+      userId : user.uid,
       typeRec: typeRec,
       reclamation: reclamation,
     })
-        .then(() => {
-           
-                console.log('reclamation envoyée');
-                Alert.alert(
+    .then(() => {
+        console.log('reclamation envoyée');
+        Alert.alert(
                   'Message envoyé',
                   'Merci pour votre confiance et temps ',
-                );
-         setPost(null);
+        );
+        setTypeRec(null);
     })
     .catch((error) => {
       console.log('Something went wrong with added reclamation to firestore.', error);
-    });
+    }
+    
+    )
+      
+    .update();
 
   }
   return (
-    <Container>
-     
-     <UserImg source={require('../assets/users/user-0.jpg')} />
-      <View style={styles.action}>
-          <FontAwesome name="user-o" color={colors.text} size={20} />
-            <UserInfoText>
-            <UserName> Nounou Benadada </UserName>
-            </UserInfoText>
-          
+    <Container> 
+      {usrInfo && 
+     <View>
+     <View style={styles.userInfoSection}>
+          <View style={{ flexDirection: 'row', marginTop: 15 }}>
+            <Avatar.Image
+              source={require('../assets/users/user-0.jpg')}
+              size={80}
+            />
+            <View style={{ marginLeft: 20 }}>
+              <Title style={[styles.title, {
+                marginTop: 15,
+                marginBottom: 5,
+              }]}>{usrInfo['firstName']} {usrInfo['lastName']} </Title>         
+              <Caption style={styles.caption}> {usrInfo['sexe']}</Caption>
+            </View>
           </View>
-         
-      <View style={styles.action}>
-          <FontAwesome name="envelope-o" color={colors.text} size={20} />
-            <UserInfoText>
-            <UserName> {user.email} </UserName>
-            </UserInfoText>
-          
-          </View>
-          <View style={styles.reclamation}>
+        </View>
+    <View style={styles.reclamation}>
       <Text style={styles.text}>Partagez vos réclamations</Text>
-
       <View style={styles.action1}>
               <FontAwesome name="bell-o" color={colors.text} size={20} />
               <SelectInput   
-                placeholder="Votre choix de réclamation"
+                placeholder="Type de votre réclamation"
                 placeholderTextColor="#666666"
                 autoCorrect={false}
                 value={typeRec}
                 onChange={(value) => setTypeRec(value)}  
                 valueStyle={[
                 styles.textInput,
-                {color: colors.text,border:0,},
-                          
+                {color: colors.text,border:0,},                        
                 ]}
-                options={[
-                {
+                options={[{
                     value: 'value1',
                     label: 'Annulation',
                 },
                 {
                     value: 'value2',
                     label: 'Modification',
-                    } ,
+                },
                 {
                     value: 'value3',
                     label: 'Commentaire',
-                }
-                    ,
+                },
                     {
                     value: 'value3',
                     label: 'Autre',
-                }
-                ]}
-                  
+                }]}       
               />
-      
       </View>
      
       <View style={styles.action}>
@@ -123,6 +135,7 @@ const ReclamationScreen =() => {
         <Text style={styles.panelButtonTitle}>Envoyer</Text>
               </TouchableOpacity>
               </View>
+    </View>  }
    </Container>
 );
 };
@@ -198,6 +211,8 @@ const styles = StyleSheet.create({
     fontSize: 17,
     fontWeight: 'bold',
     color: 'white',
+    paddingBottom: 10,
+    
   },
   action: {
     flexDirection: 'row',
@@ -206,13 +221,14 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: '#f2f2f2',
     paddingBottom: 5,
+    
   },action1: {
     flexDirection: 'row',
-    marginTop: 10,
+    marginTop: 50,
     marginBottom: 10,
     borderBottomWidth: 0,
     borderBottomColor: '#f2f2f2',
-    paddingBottom: 5,
+    paddingBottom: 10,
   },
   actionError: {
     flexDirection: 'row',
@@ -246,5 +262,11 @@ const styles = StyleSheet.create({
         fontSize: 28,
         marginBottom: 10,
         color: '#2E765E',
-      },
+  },
+  caption: {
+    fontSize: 14,
+    lineHeight: 14,
+    fontWeight: '500',
+    
+  },
 });

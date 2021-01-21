@@ -3,10 +3,7 @@ import React, { useEffect, useState, useContext } from 'react';
 import {View, Text, StyleSheet, FlatList, SafeAreaView, Alert} from 'react-native';
 
 
-import UserCard from '../components/UserCard';
-
 import {AuthContext}   from '../navigation/AuthProvider';
-import firestore from '@react-native-firebase/firestore';
 
 import {
     Container,Card, UserInfo, UserImg, UserInfoText, UserName, PostTime, PostText
@@ -31,6 +28,7 @@ const HomeScreen = ({userId} ) => {
     return (
       <View>
         {usrInfo && <Text >Bienvenue : {usrInfo['lastName']} </Text>}
+        
        </View>
       );
     };
