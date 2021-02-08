@@ -12,6 +12,7 @@ import ProfileScreen from '../screens/ProfileScreen';
 import EditProfileScreen from '../screens/EditProfileScreen';
 import AddReservationScreen from '../screens/AddReservationScreen';
 import ReservationScreen from '../screens/ReservationScreen';
+import ChambresScreen from '../screens/ChambresScreen';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -39,8 +40,27 @@ const FeedStack = ({navigation}) => (
               size={22}
               backgroundColor="#fff"
               color="#2E765E"
-              onPress={() => navigation.navigate('AddReservation')}
+              onPress={() => navigation.navigate('Chambres')}
             />
+          </View>
+        ),
+      }}
+    />
+     <Stack.Screen
+      name="Chambres"
+      component={ChambresScreen}
+      options={{
+        title: '',
+        headerTitleAlign: 'center',
+        headerStyle: {
+          backgroundColor: '#2e64e515',
+          shadowColor: '#2e64e515',
+          elevation: 0,
+        },
+        headerBackTitleVisible: false,
+        headerBackImage: () => (
+          <View style={{marginLeft:15}}>
+            <Ionicons name="arrow-back" size={25} color="#2e64e5" />
           </View>
         ),
       }}
