@@ -49,6 +49,7 @@ const ReclamationScreen =() => {
   }
   useEffect(() => {
     getAllReclamation(user.uid);
+    
   }, []);
   
   // renvoyer les données à propos dela reclamation 
@@ -71,10 +72,13 @@ const ReclamationScreen =() => {
     })
     .catch((error) => {
       console.log('Something went wrong with added reclamation to firestore.', error);
-    })     
-    .update().doc();
+    })
+         
   }
-  
+  useEffect(() => {
+    setTotalRecla;
+  }, [setTotalRecla]);
+
 
   return (
     <Container> 

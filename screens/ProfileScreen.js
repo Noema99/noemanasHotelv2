@@ -45,6 +45,7 @@ const ProfileScreen = ({ navigation }) => {
   }
   useEffect(() => {
     getAllReclamation(user.uid);
+    
   }, []);
 
   return (  
