@@ -1,10 +1,11 @@
 import React,{useContext, useState, useEffect} from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, FlatList } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, FlatList ,Alert ,} from 'react-native';
 
 import { AuthContext } from '../navigation/AuthProvider';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome';
 import { useTheme } from 'react-native-paper';
-import SelectInput from '@tele2/react-native-select-input';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import storage from '@react-native-firebase/storage';
 import firestore from '@react-native-firebase/firestore';
 import {
   Avatar,
@@ -12,7 +13,7 @@ import {
   Caption,
   TouchableRipple,
 } from 'react-native-paper';
-import { Container } from '../styles/FeedStyles';
+import { Container } from '../styles/ReservationsStyles';
 import {
   Card,
   ReservationInfo,
@@ -36,15 +37,16 @@ const ReservationScreen = ({ navigation }) => {
   const [usrInfo, setusrInfo] = useState(null);
   const [totalReserv, setTotalReserv] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [deleted, setDeleted] = useState(false);
 
   // informations sur les coordonnées du user
-    const getAllInfo = async (uid) => {
-      const usrInfos = await getUserInfoByUid(uid);
-      setusrInfo(usrInfos);
-    }
-    useEffect(() => {
-      getAllInfo(user.uid);
-    }, []);
+  const getAllInfo = async (uid) => {
+    const usrInfos = await getUserInfoByUid(uid);
+    setusrInfo(usrInfos);
+  }
+  useEffect(() => {
+    getAllInfo(user.uid);
+  }, []);
   
   // informations sur les reservations de l'user et le nombre 
   const getAllReservations = async (uid) => {
@@ -66,68 +68,137 @@ const ReservationScreen = ({ navigation }) => {
   useEffect(() => {
     setTotalReserv;
   }, [setTotalReserv]);
-
   /*
            setTotalReserv(querySnapShot.size);
            console.log('Total reserv de ce user est  : '+ totalReserv );  
   */
-
-  const fetchReservations= async (uid) => {
-    try {
-      const list = [];  
-      await firestore()
-        .collection('reservations')
-        .where("userId", "==", uid)
-        .get()
-        .then((querySnapshot) => {
-          querySnapshot.forEach((doc) => {
-            const {
-              type,
-              chambreImg,
-              nbrLit,
-              genreLit,
-              dateDebut,
-              dateFin,
-              nbrPersonnes,
-              periode,
-              prixNuit,
-              prixTotal
-            } = doc.data();
-            list.push({
-              id: doc.id,
-              type,
-              chambreImg,
-              nbrLit,
-              genreLit,
-              dateDebut,
-              dateFin,
-              nbrPersonnes,         
-              periode,
-              prixNuit,
-              prixTotal
-            });
-            
+ const fetchReservations= async (uid) => {
+  try {
+    const list = [];  
+    await firestore()
+      .collection('reservations')
+      .where("userId", "==", uid)
+      .get()
+      .then((querySnapshot) => {
+        querySnapshot.forEach((doc) => {
+          const {
+            type,
+            chambreImg,
+            nbrLit,
+            genreLit,
+            dateDebut,
+            dateFin,
+            nbrPersonnes,
+            periode,
+            prixNuit,
+            prixTotal
+          } = doc.data();
+          list.push({
+            id: doc.id,
+            type,
+            chambreImg,
+            nbrLit,
+            genreLit,
+            dateDebut,
+            dateFin,
+            nbrPersonnes,         
+            periode,
+            prixNuit,
+            prixTotal
           });
           
-        }); 
-        setReservations(list);
-      if (loading) {
-        setLoading(false);
-      }
-     // console.log('Chambres: ', chambres);
-    } catch (e) {
-      console.log(e);
+        });
+        
+      }); 
+      setReservations(list);
+    if (loading) {
+      setLoading(false);
     }
+   // console.log('Chambres: ', chambres);
+  } catch (e) {
+    console.log(e);
+  }
+};
+
+useEffect(() => {
+  fetchReservations(user.uid);
+}, []);  
+
+useEffect(() => {
+  setTotalReserv;
+}, [setTotalReserv]);
+  
+  
+  const handleDelete = (reservID) => {
+    Alert.alert(
+      'Annuler cette réservation',
+      'Vous en êtes surs ?',
+      [
+        {
+          text: 'Annuler',
+          onPress: () => console.log('reservation non annulee '),
+          style: 'cancel',
+        },
+        {
+          text: 'Confirmer',
+          onPress: () => deleteReservation(reservID),
+        },
+      ],
+      {cancelable: false},
+    );
   };
 
-  useEffect(() => {
-    fetchReservations(user.uid);
-  }, []);  
+ const deleteReservation = (reservID) => {
+    console.log('reservID de cette reservation a supprimer est : ', reservID);
+    firestore()
+      .collection('reservations')
+      .doc(prixTotal)
+      .get()
+      .then((documentSnapshot) => {
+        if (documentSnapshot.exists) {
+          const {
+            reservID
+          } = documentSnapshot.data();
 
-  useEffect(() => {
-    setTotalReserv;
-  }, [setTotalReserv]);
+          if (reservID != null) {
+            const storageRef = storage().refFromURL(reservID);
+            const reservIDREF = storage().ref(storageRef.fullPath);
 
+            reservIDREF
+              .delete()
+              .then(() => {
+                console.log(`cette reserv has been deleted successfully.`);
+                deleteFirestoreData(reservID);
+              })
+              .catch((e) => {
+                console.log('Error while deleting the resev. ', e);
+              });
+            // If the post image is not available
+          } else {
+            deleteFirestoreData(reservID);
+          }
+        }
+      });
+  };
+
+  const deleteFirestoreData = (reservID) => {
+    firestore()
+      .collection('reservations')
+      .doc(reservID)
+      .delete()
+      .then(() => {
+        Alert.alert(
+          'Reservation bien annulee et suprrimee',
+          'a la prochaine !!',
+        );
+        setDeleted(true);
+      })
+      .catch((e) => console.log('Error deleting posst.', e));
+  };
+
+  const ListHeader = () => {
+    return null;
+  };
   return (
     <Container> 
       {usrInfo && 
@@ -143,35 +214,32 @@ const ReservationScreen = ({ navigation }) => {
                   marginTop: 15,
                   marginBottom: 5,
                 }]}>{usrInfo['firstName']} {usrInfo['lastName']} </Title>      
-            </View>
-            
+            </View>          
             <FontAwesome5.Button
               name="plus"
-              size={22}
+              size={24}
               backgroundColor="#fff"
               color="#2E765E"
                 onPress={() => navigation.navigate('Chambres')}
-               marginRight= {10}
+               marginLeft= {50}
             />
           </View>
-          
           </View>
-          <View style={styles.infoBoxWrapper}>
-           
+          <View style={styles.infoBoxWrapper}>          
             <View style={styles.infoBox}>
               {usrInfo && <Title>{totalReserv}</Title>}
-            <Caption>Réservations
-            </Caption>
-            
+               <Caption>Réservations</Caption>           
             </View>
-        </View>
+           </View>       
          <View >
             <Container>
               <FlatList
                 data={reservations}
-                renderItem={({item}) => (  <Card key={item.id}>
-                  <ReservationInfo> 
-          <ChambreImg source={{ uri : item.chambreImg}} />
+                renderItem={({item}) =>(
+                  <TouchableOpacity onPress={()=> handleDelete()} >
+                    <Card key={item.prixTotal}  >
+                      <ReservationInfo> 
+                        <ChambreImg source={{ uri : item.chambreImg}} />
                         <ReservationInfoText>
                             <ChambreType onPress={() => {}}>C'est une chambre {item.type}</ChambreType>
                             <NbrLit>{item.nbrLit} lit(s)</NbrLit>
@@ -183,9 +251,12 @@ const ReservationScreen = ({ navigation }) => {
                             <NbrLit>Prix total : <PrixTotal> {item.prixTotal} MAD</PrixTotal></NbrLit>
                             <NbrLit>Paiement à l'accueil ! </NbrLit>               
                         </ReservationInfoText>
-                  </ReservationInfo> 
-                </Card>)}
-                keyExtractor={(item) => item.id}
+                      </ReservationInfo> 
+                    </Card>
+                  </TouchableOpacity>)}
+                ListHeaderComponent={ListHeader}
+                ListFooterComponent={ListHeader}
+                keyExtractor={(item) => item.prixTotal}
                 showsVerticalScrollIndicator={false}
               />
             </Container>
@@ -229,14 +300,14 @@ const styles = StyleSheet.create({
     // borderTopLeftRadius: 20,
     // borderTopRightRadius: 20,
     // shadowColor: '#000000',
-    // shadowOffset: {width: 0, height: 0},
+    // shadowOffset: {wprixTotalth: 0, height: 0},
     // shadowRadius: 5,
     // shadowOpacity: 0.4,
   },
   header: {
     backgroundColor: '#FFFFFF',
     shadowColor: '#333333',
-    shadowOffset: {width: -1, height: -3},
+    shadowOffset: {wprixTotalth: -1, height: -3},
     shadowRadius: 2,
     shadowOpacity: 0.4,
     // elevation: 5,
@@ -248,7 +319,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   panelHandle: {
-    width: 40,
+    wprixTotalth: 40,
     height: 8,
     borderRadius: 4,
     backgroundColor: '#00000040',
@@ -282,7 +353,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     marginTop: 10,
     marginBottom: 10,
-    borderBottomWidth: 1,
+    borderBottomWprixTotalth: 1,
     borderBottomColor: '#f2f2f2',
     paddingBottom: 5,
     
@@ -290,14 +361,14 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     marginTop: 50,
     marginBottom: 10,
-    borderBottomWidth: 0,
+    borderBottomWprixTotalth: 0,
     borderBottomColor: '#f2f2f2',
     paddingBottom: 10,
   },
   actionError: {
     flexDirection: 'row',
     marginTop: 10,
-    borderBottomWidth: 1,
+    borderBottomWprixTotalth: 1,
     borderBottomColor: '#FF0000',
     paddingBottom: 5,
   },
@@ -306,7 +377,7 @@ const styles = StyleSheet.create({
     marginTop: Platform.OS === 'ios' ? 0 : -12,
     paddingLeft: 10,
       color: '#05375a',
-      borderWidth: 0,
+      borderWprixTotalth: 0,
     
   },
   dateInput: {
@@ -334,15 +405,15 @@ const styles = StyleSheet.create({
     
   },infoBoxWrapper: {
     borderBottomColor: '#dddddd',
-    borderBottomWidth: 1,
+    borderBottomWprixTotalth: 1,
     borderTopColor: '#dddddd',
-    borderTopWidth: 1,
+    borderTopWprixTotalth: 1,
     flexDirection: 'row',
     height: 100,  
     marginTop: 35,
   },
   infoBox: {
-    width: '60%',
+    wprixTotalth: '60%',
     alignItems: 'center',
     justifyContent: 'center',
     paddingLeft:120,

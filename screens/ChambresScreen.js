@@ -18,7 +18,8 @@ import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 
 const ChambresScreen = ({navigation}) => {
     const [chambres, setChambres] = useState(null);
-    const [loading, setLoading] = useState(true);  
+  const [loading, setLoading] = useState(true);  
+  
     const fetchChambres = async () => {
         try {
           const list = [];  
