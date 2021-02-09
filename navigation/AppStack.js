@@ -53,7 +53,7 @@ const FeedStack = ({navigation}) => (
       name="Chambres"
       component={ChambresScreen}
       options={{
-        title: 'Réservez avec +',
+        title: 'Cliquez sur la chambre!',
         fontsize : 12,
         headerTitleAlign: 'center',
         headerStyle: {
@@ -112,6 +112,25 @@ const FeedStack = ({navigation}) => (
      <Stack.Screen
       name="AddReservation"
       component={AddReservationScreen}
+      options={{
+        title: '',
+        headerTitleAlign: 'center',
+        headerStyle: {
+          backgroundColor: '#2e64e515',
+          shadowColor: '#2e64e515',
+          elevation: 0,
+        },
+        headerBackTitleVisible: false,
+        headerBackImage: () => (
+          <View style={{marginLeft:15}}>
+            <Ionicons name="arrow-back" size={25} color="#2e64e5" />
+          </View>
+        ),
+      }}
+    />
+     <Stack.Screen
+      name="Reservation"
+      component={ReservationScreen}
       options={{
         title: '',
         headerTitleAlign: 'center',

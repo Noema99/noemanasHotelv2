@@ -54,12 +54,12 @@ export const AuthProvider = ({children}) => {
         },
         getUserReservationByUid: async (uid) => {
           let reservationRef = firestore().collection('reservations').doc(uid);
-          const docu = await reservationRef.get();
-          if (!docu.exists) {
+          const docum = await reservationRef.get();
+          if (!docum.exists) {
             console.log('No such document! (reservation)');
             return null;
           }
-          return docu.data();
+          return docum.data();
         }
       }
       }>

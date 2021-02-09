@@ -23,9 +23,7 @@ const ChambreCard = ({onIconPress,item, navigation,route}) => {
           <ChambreImg source={{ uri : item.chambreImg}} />
           <ChambreInfoText>
           <ChambreType onPress={() => {
-            console.log(item.prixNuit);
-          }}
-            >C'est une chambre {item.type}
+          }}>C'est une chambre {item.type}
        
           </ChambreType>
                   <NbrLit>{item.nbrLit} lit(s)</NbrLit>

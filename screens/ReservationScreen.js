@@ -2,7 +2,7 @@ import React,{useContext, useState, useEffect} from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, FlatList } from 'react-native';
 
 import { AuthContext } from '../navigation/AuthProvider';
-import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import FontAwesome5 from 'react-native-vector-icons/FontAwesome';
 import { useTheme } from 'react-native-paper';
 import SelectInput from '@tele2/react-native-select-input';
 import firestore from '@react-native-firebase/firestore';
@@ -12,16 +12,30 @@ import {
   Caption,
   TouchableRipple,
 } from 'react-native-paper';
-import {Container} from '../styles/FeedStyles';
+import { Container } from '../styles/FeedStyles';
+import {
+  Card,
+  ReservationInfo,
+  ReservationInfoText,
+  ChambreImg,
+  ChambreType,
+  ChambreInfoText,
+    NbrLit,
+    GenreLit,
+    PrixNuit,
+    PrixTotal,
+  Periode,
+  DateDebut,NbrPersonne,
+} from '../styles/ReservationsStyles';
 
 const ReservationScreen = ({ navigation }) => {
   const { colors } = useTheme();
-  const [typeRec, setTypeRec] = useState(null);
-  const [reservation, setReservation] = useState(null);
+  const [reservations, setReservations] = useState(null);
   const [usrReservation, setusrReservation] = useState(null);
   const { logout, user, getUserInfoByUid, getUserReservationByUid } = useContext(AuthContext);
   const [usrInfo, setusrInfo] = useState(null);
   const [totalReserv, setTotalReserv] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   // informations sur les coordonnées du user
     const getAllInfo = async (uid) => {
@@ -48,12 +62,71 @@ const ReservationScreen = ({ navigation }) => {
   useEffect(() => {
     getAllReservations(user.uid);  
   }, []);
-      
   
   useEffect(() => {
     setTotalReserv;
   }, [setTotalReserv]);
 
+  /*
+           setTotalReserv(querySnapShot.size);
+           console.log('Total reserv de ce user est  : '+ totalReserv );  
+  */
+
+  const fetchReservations= async (uid) => {
+    try {
+      const list = [];  
+      await firestore()
+        .collection('reservations')
+        .where("userId", "==", uid)
+        .get()
+        .then((querySnapshot) => {
+          querySnapshot.forEach((doc) => {
+            const {
+              type,
+              chambreImg,
+              nbrLit,
+              genreLit,
+              dateDebut,
+              dateFin,
+              nbrPersonnes,
+              periode,
+              prixNuit,
+              prixTotal
+            } = doc.data();
+            list.push({
+              id: doc.id,
+              type,
+              chambreImg,
+              nbrLit,
+              genreLit,
+              dateDebut,
+              dateFin,
+              nbrPersonnes,         
+              periode,
+              prixNuit,
+              prixTotal
+            });
+            
+          });
+          
+        }); 
+        setReservations(list);
+      if (loading) {
+        setLoading(false);
+      }
+     // console.log('Chambres: ', chambres);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  useEffect(() => {
+    fetchReservations(user.uid);
+  }, []);  
+
+  useEffect(() => {
+    setTotalReserv;
+  }, [setTotalReserv]);
 
   return (
     <Container> 
@@ -70,25 +143,48 @@ const ReservationScreen = ({ navigation }) => {
                   marginTop: 15,
                   marginBottom: 5,
                 }]}>{usrInfo['firstName']} {usrInfo['lastName']} </Title>      
-              </View>
             </View>
+            
+            <FontAwesome5.Button
+              name="plus"
+              size={22}
+              backgroundColor="#fff"
+              color="#2E765E"
+                onPress={() => navigation.navigate('Chambres')}
+               marginRight= {10}
+            />
+          </View>
+          
           </View>
           <View style={styles.infoBoxWrapper}>
            
             <View style={styles.infoBox}>
               {usrInfo && <Title>{totalReserv}</Title>}
-              <Caption>Réservations</Caption>
+            <Caption>Réservations
+            </Caption>
+            
             </View>
         </View>
-
-
          <View >
             <Container>
               <FlatList
                 data={reservations}
-                renderItem={({item}) => (
-                  <ChambreCard item={item} />
-                )}
+                renderItem={({item}) => (  <Card key={item.id}>
+                  <ReservationInfo> 
+          <ChambreImg source={{ uri : item.chambreImg}} />
+                        <ReservationInfoText>
+                            <ChambreType onPress={() => {}}>C'est une chambre {item.type}</ChambreType>
+                            <NbrLit>{item.nbrLit} lit(s)</NbrLit>
+                            <GenreLit>De type {item.genreLit}</GenreLit>
+                            <NbrLit>Prix <PrixNuit> {item.prixNuit} DHS/nuit</PrixNuit></NbrLit>
+                            <NbrLit>Periode de <Periode> {item.periode} jours</Periode></NbrLit>
+                            <NbrLit>Première date  <DateDebut> {item.dateDebut} </DateDebut></NbrLit>
+                            <NbrLit>Vous serez  <NbrPersonne> {item.nbrPersonnes} </NbrPersonne>personnes </NbrLit>
+                            <NbrLit>Prix total : <PrixTotal> {item.prixTotal} MAD</PrixTotal></NbrLit>
+                            <NbrLit>Paiement à l'accueil ! </NbrLit>               
+                        </ReservationInfoText>
+                  </ReservationInfo> 
+                </Card>)}
                 keyExtractor={(item) => item.id}
                 showsVerticalScrollIndicator={false}
               />

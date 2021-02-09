@@ -33,7 +33,6 @@ const ReserverScreen = ({navigation, route}) => {
   const [dateDebut, setDateDebut] = useState(null);
   const [dateFin, setDateFin] = useState(null);
   const [prixTotal, setPrixTotal] = useState(null);
-  const prixTot = prixNuit * periode; 
  
   const submitReservation = async () => {
     firestore()
@@ -45,6 +44,7 @@ const ReserverScreen = ({navigation, route}) => {
         nbrLit: item.nbrLit,
         genreLit: item.genreLit,
         prixNuit: item.prixNuit,
+        chambreImg: item.chambreImg,
         nbrPersonnes: nbrPersonnes,
         periode: periode,
         dateDebut: dateDebut,
