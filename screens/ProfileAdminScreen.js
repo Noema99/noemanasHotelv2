@@ -3,7 +3,7 @@ import { View,SafeAreaView,  StyleSheet, TouchableOpacity,TextInput,Alert } from
 
 import firestore from '@react-native-firebase/firestore';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
-import { AuthContext } from '../navigation/AuthProvider';
+import { AuthContext } from '../navigation/AuthProviderAdmin';
 import {
   Avatar,
   Title,
@@ -13,63 +13,90 @@ import {
 } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
-const ProfileScreen = ({ navigation }) => {
+const ProfileAdminScreen = ({ navigation }) => {
   
-  const { logout, user, getUserInfoByUid, getUserReclamationByUid } = useContext(AuthContext);
-  const [usrInfo, setusrInfo] = useState(null);
-  const [usrNewReclamation, setusrNewReclamation] = useState(null);
-  const [usrReclamation, setusrReclamation] = useState(null);
+  const { logout, admin, getAdminInfoByUid } = useContext(AuthContext);
+  const [adminInfo, setadminInfo] = useState(null);
   const [totalRecla, setTotalRecla] = useState(null);
-  const [usrReservation, setusrReservation] = useState(null);
-  const [totalReserv, setTotalReserv] = useState(0);
+    const [totalReserv, setTotalReserv] = useState(null);
+    const [totalChambres, setTotalChambres] = useState(null);
+    const [totalUsers, setTotalUsers] = useState(null);
+
   // informations sur les coordonnées du user
   const getAllInfo = async (uid) => {
-    const usrInfos = await getUserInfoByUid(uid);
-    setusrInfo(usrInfos);
+    const adminInfos = await getAdminInfoByUid(uid);
+    setadminInfo(adminInfos);
   }
   useEffect(() => {
-    getAllInfo(user.uid);
+    getAllInfo(admin.uid);
   }, []);
-
-  // informations sur les reclamations de l'user et le nombre 
-  const getAllReclamation = async (uid) => {
-    const usrReclamations = await getUserReclamationByUid(uid);
-    setusrReclamation(usrReclamations);
+ 
+    
+    //reclamations totale
+  const getAllReclamation = async () => {
     await firestore()
-      .collection('reclamations')
-      .where("userId", "==", uid)
+        .collection('reclamations')
+        .orderBy('uid')
       .get()
       .then(function (querySnapShot) {
         setTotalRecla(querySnapShot.size);
       })
-      console.log("nbr total des reserv de cet utilisateur est "+ totalRecla);
+      console.log("nbr total des reclamations est "+ totalRecla);
   }
   useEffect(() => {
-    getAllReclamation(user.uid);
+    getAllReclamation();
     
   }, []);
+    
+    // reservations 
+    const getAllReservation = async () => {
+        await firestore()
+          .collection('reservations').orderBy('uid')
+          .get()
+          .then(function (querySnapShot) {
+            setTotalReserv(querySnapShot.size);
+          })
+          console.log("nbr total des reserv est "+ totalReserv);
+      }
+      useEffect(() => {
+        getAllReservation();
+        
+      }, []);
+    
+    //chambres 
+    const getAllChambres = async () => {
+        await firestore()
+          .collection('chambres').orderBy('uid')
+          .get()
+          .then(function (querySnapShot) {
+            setTotalChambres(querySnapShot.size);
+          })
+          console.log("nbr total des chambres est "+ totalChambres);
+      }
+      useEffect(() => {
+        getAllChambres();
+        
+      }, []);
+    
+    // users
+    const getAllUsers = async () => {
+        await firestore()
+          .collection('users').orderBy('uid')
+          .get()
+          .then(function (querySnapShot) {
+            getAllUsers(querySnapShot.size);
+          })
+          console.log("nbr total des  utilisateurs est "+ totalUsers);
+      }
+      useEffect(() => {
+        getAllUsers();
+        
+      }, []);
 
-  //reservations 
-  const getAllReservation= async (uid) => {
-    const usrReservations= await getUserReservationByUid(uid);
-    setusrReservation(usrReservations);
-    await firestore()
-      .collection('reservations')
-      .where("userId", "==", uid)
-      .get()
-      .then(function (querySnapShot) {
-        setTotalReserv(querySnapShot.size);
-      })
-      console.log("nbr total des reserv de cet utilisateur est "+ totalReserv);
-  }
-  useEffect(() => {
-    getAllReservation(user.uid);
-    
-  }, []);
 
   return (  
     <SafeAreaView style={styles.container}>
-      {usrInfo &&
+      {adminInfo &&
         <View>
         <View style={styles.userInfoSection}>
           <View style={{ flexDirection: 'row', marginTop: 15 }}>
@@ -81,27 +108,23 @@ const ProfileScreen = ({ navigation }) => {
               <Title style={[styles.title, {
                 marginTop: 15,
                 marginBottom: 5,
-              }]}>{usrInfo['firstName']} {usrInfo['lastName']} </Title>         
-              <Caption style={styles.caption}> {usrInfo['sexe']}</Caption>
+              }]}>{adminInfo['firstName']} {adminInfo['lastName']} </Title>      
             </View>
           </View>
         </View>
         <View style={styles.userInfoSection}>
           <View style={styles.row}>
             <Icon name="map-marker-radius" color="#2E765E" size={28}/>
-            <Text style={{color:"#777777", marginLeft: 20}}>{usrInfo['city']}</Text>
+            <Text style={{color:"#777777", marginLeft: 20}}>{adminInfo['role']}</Text>
           </View>
           <View style={styles.row}>
             <Icon name="phone" color="#2E765E" size={28}/>
-            <Text style={{color:"#777777", marginLeft: 20}}>{usrInfo['phoneNumber']}</Text>
+            <Text style={{color:"#777777", marginLeft: 20}}>{adminInfo['numTel']}</Text>
           </View>
-          <View style={styles.row}>
-            <Icon name="calendar" color="#2E765E" size={28}/>
-            <Text style={{color:"#777777", marginLeft: 20}}>{usrInfo['dateNaissance']}</Text>
-          </View>
+         
           <View style={styles.row}>
             <Icon name="email" color="#2E765E" size={28}/>
-            <Text style={{color:"#777777", marginLeft: 20}}>{user.email}</Text>
+            <Text style={{color:"#777777", marginLeft: 20}}>{admin.email}</Text>
           </View>
         </View> 
         <View style={styles.infoBoxWrapper}>
@@ -109,60 +132,37 @@ const ProfileScreen = ({ navigation }) => {
             borderRightColor: '#dddddd',
             borderRightWidth: 1
           }]}>
-           {usrInfo && <Title>{totalReserv}</Title>}
+            <Title>{totalReserv}</Title>
             <Caption>Réservations</Caption>
           </View>
           <View style={styles.infoBox}>
-            {usrInfo && <Title>{totalRecla}</Title>}
+          <Title>{totalRecla}</Title>
             <Caption>Réclamations</Caption>
+                  </View>
+                  <View style={styles.infoBox}>
+          <Title>{totalChambres}</Title>
+            <Caption>Chambres</Caption>
+          </View>
+                  <View style={styles.infoBox}>
+          <Title>{totalUsers}</Title>
+            <Caption>Clients</Caption>
           </View>
       </View>
-      <View style={styles.menuWrapper}>
-        <TouchableRipple onPress={() => {}}>
-          <View style={styles.menuItem}>
-            <Icon name="heart-outline" color="#2E765E" size={25}/>
-            <Text style={styles.menuItemText}>Mes appréciations</Text>
-          </View>
-        </TouchableRipple>
-        <TouchableRipple onPress={() => {}}>
-          <View style={styles.menuItem}>
-            <Icon name="credit-card" color="#2E765E" size={25}/>
-            <Text style={styles.menuItemText}>Mes paiements</Text>
-          </View>
-          </TouchableRipple>
-          <TouchableRipple onPress={() => navigation.navigate('EditProfile')}>
-          <View style={styles.menuItem}>
-            <Icon name="file-edit" color="#2E765E" size={25}/>
-            <Text style={styles.menuItemText}>Modifier mon profil</Text>
-          </View>
-          </TouchableRipple>
-        <TouchableRipple onPress={() => {Alert.alert ('Contactez nous sur le numéro : +212 1234 5678', 'Ou par message en boîte de réclamations')}}>
-          <View style={styles.menuItem}>
-            <Icon name="phone" color="#2E765E" size={25}/>
-            <Text style={styles.menuItemText}>Nous contacter</Text>
-          </View>
-          </TouchableRipple>
-          <TouchableRipple onPress={() => {}}>
-          <View style={styles.menuItem}>
-            <Icon name="share-outline" color="#2E765E" size={25}/>
-            <Text style={styles.menuItemText}>Partager avec mes amis</Text>
-          </View>
-        </TouchableRipple>
-          <TouchableRipple onPress={() => logout()}>
+      <View style={styles.menuWrapper}>  
+          <TouchableRipple onPress={() => logoutAdmin()}>
           <View style={styles.menuItem}>
             <Icon name="lock-open" color="#2E765E" size={25}/>
             <Text style={styles.menuItemText}>Se déconnecter</Text>
           </View>
         </TouchableRipple>
-      </View>  
-      
+      </View>      
       </View>      
       }
       </SafeAreaView>
   );
 };
   
-export default ProfileScreen;
+export default ProfileAdminScreen;
 
 const styles = StyleSheet.create({
   container: {

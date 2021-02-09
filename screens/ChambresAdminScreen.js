@@ -6,7 +6,7 @@ import {
   ScrollView,
   FlatList,
   SafeAreaView,
-  StyleSheet, Text,TouchableOpacity
+  StyleSheet, Text
 } from 'react-native';
 
 import firestore from '@react-native-firebase/firestore';
@@ -16,7 +16,7 @@ import {Container} from '../styles/ChambresStyles';
 
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 
-const ChambresScreen = ({navigation}) => {
+const ChambresAdminScreen = ({navigation}) => {
     const [chambres, setChambres] = useState(null);
     const [loading, setLoading] = useState(true);  
     const fetchChambres = async () => {
@@ -53,7 +53,6 @@ const ChambresScreen = ({navigation}) => {
                   reduction,
                 });
               });
-              
             }); 
           setChambres(list);
           if (loading) {
@@ -69,10 +68,10 @@ const ChambresScreen = ({navigation}) => {
         fetchChambres();
       }, []);  
   
-  const reserverChambre = (item) => {
+  const reserverChambre = () => {
     
       navigation.navigate('Reserver', {
-        selectedChambre: item,
+        selectedChambre: item
       });
     
   };
@@ -81,14 +80,23 @@ const ChambresScreen = ({navigation}) => {
             <Container>
               <FlatList
                 data={chambres}
-            renderItem={({ item }) => (<TouchableOpacity onPress={() => {
-              navigation.navigate('Reserver', { selectedChambre: item });
-              console.log(item.prixNuit);
-            }}><ChambreCard item={item} 
-                /></TouchableOpacity>)}
+                renderItem={({item}) => (
+                  <ChambreCard item={item} 
+                  />
+                )}
                 keyExtractor={(item) => item.id}
-                showsVerticalScrollIndicator={false}   
+            showsVerticalScrollIndicator={false}  
               />
+              
+            <FontAwesome5.Button
+              name="plus"
+              size={12}
+              backgroundColor="#f8f8f8"
+              color="#2E765E"
+              onPress={() => {
+              navigation.navigate('AjouterChambre');
+            }}
+            />
             </Container>
        
   );
@@ -123,5 +131,5 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ChambresScreen;  
+export default ChambresAdminScreen;  
     

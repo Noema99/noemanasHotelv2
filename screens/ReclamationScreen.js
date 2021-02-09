@@ -45,7 +45,7 @@ const ReclamationScreen =() => {
       .then(function (querySnapShot) {
         setTotalRecla(querySnapShot.size);
       })
-      console.log("nbr total des reserv de cet utilisateur est "+ totalRecla);
+      console.log("nbr total des recla de cet utilisateur est "+ totalRecla);
   }
   useEffect(() => {
     getAllReclamation(user.uid);

@@ -13,6 +13,9 @@ import EditProfileScreen from '../screens/EditProfileScreen';
 import AddReservationScreen from '../screens/AddReservationScreen';
 import ReservationScreen from '../screens/ReservationScreen';
 import ChambresScreen from '../screens/ChambresScreen';
+import ReserverScreen from '../screens/ReserverScreen';
+
+import ChambreCard from '../components/ChambreCard';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -50,7 +53,8 @@ const FeedStack = ({navigation}) => (
       name="Chambres"
       component={ChambresScreen}
       options={{
-        title: '',
+        title: 'Réservez avec +',
+        fontsize : 12,
         headerTitleAlign: 'center',
         headerStyle: {
           backgroundColor: '#2e64e515',
@@ -60,7 +64,47 @@ const FeedStack = ({navigation}) => (
         headerBackTitleVisible: false,
         headerBackImage: () => (
           <View style={{marginLeft:15}}>
-            <Ionicons name="arrow-back" size={25} color="#2e64e5" />
+            <Ionicons name="arrow-back" size={25} color="#2E765E" />
+          </View>
+        ),
+      }}
+    />
+    <Stack.Screen
+      name="ChambreCard"
+      component={ChambreCard}
+      options={{
+        title: 'chambrecard',
+        fontsize : 12,
+        headerTitleAlign: 'center',
+        headerStyle: {
+          backgroundColor: '#2e64e515',
+          shadowColor: '#2e64e515',
+          elevation: 0,
+        },
+        headerBackTitleVisible: false,
+        headerBackImage: () => (
+          <View style={{marginLeft:15}}>
+            <Ionicons name="arrow-back" size={25} color="#2E765E" />
+          </View>
+        ),
+      }}
+    />
+     <Stack.Screen
+      name="Reserver"
+      component={ReserverScreen}
+      options={{
+        title: 'Ici reservation',
+        fontsize : 12,
+        headerTitleAlign: 'center',
+        headerStyle: {
+          backgroundColor: '#2e64e515',
+          shadowColor: '#2e64e515',
+          elevation: 0,
+        },
+        headerBackTitleVisible: false,
+        headerBackImage: () => (
+          <View style={{marginLeft:15}}>
+            <Ionicons name="arrow-back" size={25} color="#2E765E" />
           </View>
         ),
       }}

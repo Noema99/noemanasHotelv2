@@ -1,7 +1,7 @@
 import React, {useContext, useState} from 'react';
 import { View, Text, StyleSheet, TouchableOpacity,TextInput,Alert } from 'react-native';
 
-import { AuthContext } from '../navigation/AuthProvider';
+import { AuthContext } from '../navigation/AuthProviderAdmin';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import { useTheme } from 'react-native-paper';
 import Feather from 'react-native-vector-icons/Feather';
@@ -15,21 +15,22 @@ import {
   Container,Card, UserInfo, UserImg, UserInfoText, UserName, PostTime, PostText
 } from '../styles/FeedStyles';
 
-const EditProfileScreen = () => {
-  
-  const { user, logout } = useContext(AuthContext);
+const AjouterChambreScreen =() => {
+  const { admin, logoutAdmin } = useContext(AuthContext);
   const { colors } = useTheme();
-  const [sexe, setSexe] = useState(null);
-  const [firstName, setFirstName] = useState(null);
-  const [lastName, setLastName] = useState(null);
-  const [dateNaissance, setDateNaissance] = useState(null);
-  const [phoneNumber, setPhoneNumber] = useState(null);
-  const [city, setCity] = useState(null);
- 
+  const [type, setType] = useState(null);
+  const [nbrLit, setFirstName] = useState(null);
+  const [genreLit, setLastName] = useState(null);
+  const [cheminee, setDateNaissance] = useState(null);
+  const [balcon, setPhoneNumber] = useState(null);
+  const [salleBain, setCity] = useState(null);
+    const [nbrPers, setCity] = useState(null);
+    const [reduction, setCity] = useState(null);
+    const [prixNuit, setCity] = useState(null);
   const submitUser = async () => {
     
     firestore()
-      .collection('users')
+      .collection('chambres')
       .doc(user.uid)
       .set({
       firstName: firstName,
@@ -207,7 +208,7 @@ const EditProfileScreen = () => {
 );
 };
 
-export default EditProfileScreen;
+export default AjouterChambreScreen;
 
 const styles = StyleSheet.create({
   container: {

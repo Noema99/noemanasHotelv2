@@ -14,60 +14,44 @@ export const Card = styled.View`
     border-radius: 10px;
 `;
 
-export const ChambreInfo = styled.View`
+export const ReclamationInfo = styled.View`
     flex-direction: row;
     justify-content: flex-start;
     padding: 15px;
 `;
 
-export const ChambreImg = styled.Image`
-    width:70px;
-    height: 70px;
-    border-radius: 30px;
-`;
-
-export const ChambreInfoText = styled.View`
+export const ReclamationInfoText = styled.View`
     flex-direction: column;
     justify-content: center;
     margin-left: 10px;
 `;
 
-export const ChambreType = styled.Text`
+export const ReclamationType = styled.Text`
     font-size: 20px;
     font-weight: bold;
     font-family: 'Lato-Regular';
 `;
 
-export const NbrLit = styled.Text`
-    font-size: 16px;
-    font-family: 'Lato-Regular';
-    color: #666;
+
+
+
+export const ReservationInfo = styled.View`
+    flex-direction: row;
+    justify-content: flex-start;
+    padding: 15px;
 `;
-export const GenreLit = styled.Text`
-    font-size: 16px;
-    font-family: 'Lato-Regular';
-    color: #666;
+
+export const ReservationInfoText = styled.View`
+    flex-direction: column;
+    justify-content: center;
+    margin-left: 10px;
 `;
-export const PrixNuit = styled.Text`
-    font-size: 18px;
-    font-family: 'Lato-Regular';
+
+export const ReservationDuree = styled.Text`
+    font-size: 20px;
     font-weight: bold;
-    color: #666;
-`;
-
-export const PostText = styled.Text`
-    font-size: 14px;
     font-family: 'Lato-Regular';
-    padding-left: 5px;
-    padding-right: 30px;
 `;
-
-export const PostImg = styled.Image`
-    width: 100%;
-    height: 250px;
-    margin-top: 15px;
-`;
-
 export const Divider = styled.View`
     border-bottom-color: #dddddd;
     border-bottom-width: 1px;

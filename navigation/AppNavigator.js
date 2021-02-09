@@ -11,7 +11,10 @@ import { NavigationContainer } from '@react-navigation/native';
 import AddReservationScreen from '../screens/AddReservationScreen';
 import ForgotpasswordScreen from '../screens/ForgotpasswordScreen';
 import ReclamationScreen from '../screens/ReclamationScreen';
+import ReservationScreen from '../screens/ReservationScreen';
 import ChambresScreen from '../screens/ChambresScreen';
+import ReserverScreen from '../screens/ReserverScreen';
+import ChambreCard from '../components/ChambreCard';
 
 const AppStack  = createStackNavigator();
 
@@ -29,6 +32,9 @@ const AppNavigator = props => {
         <AppStack.Screen name="Forgotpassword" component={ForgotpasswordScreen} />
         <AppStack.Screen name="Reclamation" component={ReclamationScreen} />
         <AppStack.Screen name="Chambres" component={ChambresScreen} />
+        <AppStack.Screen name="Reservation" component={ReservationScreen} />
+        <AppStack.Screen name="Reserver" component={ReserverScreen} />
+        <AppStack.Screen name="ChambreCard" component={ChambreCard} />
      </AppStack.Navigator>
    </NavigationContainer>
   );
